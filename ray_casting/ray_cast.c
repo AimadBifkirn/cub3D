@@ -6,7 +6,7 @@ void	cast_single_ray(t_elements *elem)
 	double	ray_y = elem->player->y;
 	double	dir_x = elem->player->direction_x;
 	double	dir_y = elem->player->direction_y;
-	double	step_size = 0.05; // small step for smooth ray
+	double	step_size = 0.05;
 
 	while (1)
 	{
@@ -20,7 +20,7 @@ void	cast_single_ray(t_elements *elem)
 			break ;
 		int pixel_x = ray_x * square_size;
 		int pixel_y = ray_y * square_size;
-		mlx_pixel_put(elem->mlx, elem->wind, pixel_x, pixel_y, 0xFF00FF); // magenta
+		mlx_pixel_put(elem->mlx, elem->wind, pixel_x, pixel_y, 0xFF00FF);
 	}
 }
 
@@ -120,21 +120,25 @@ void	get_player_direction(t_elements **elem)
 	{
 		(*elem)->player->direction_x = 0;
 		(*elem)->player->direction_y = -1;
+		(*elem)->player->angle = -(PI / 2);
 	}
 	else if ((*elem)->map->map[p_y][p_x] == 'S')
 	{
 		(*elem)->player->direction_x = 0;
 		(*elem)->player->direction_y = 1;
+		(*elem)->player->angle = (PI / 2);
 	}
 	else if ((*elem)->map->map[p_y][p_x] == 'E')
 	{
 		(*elem)->player->direction_x = 1;
 		(*elem)->player->direction_y = 0;
+		(*elem)->player->angle = 0;
 	}
 		else if ((*elem)->map->map[p_y][p_x] == 'W')
 	{
 		(*elem)->player->direction_x = -1;
 		(*elem)->player->direction_y = 0;
+		(*elem)->player->angle = PI;
 	}
 }
 
@@ -163,6 +167,34 @@ void	get_player_pos(t_elements **elem)
 	}
 }
 
+void	cast_multiple_rays(t_elements *elem)
+{
+	int		num_rays = 60;
+	double	fov = PI / 3; // 60° field of view
+	double	start_angle = elem->player->angle - fov / 2;
+	double	step_angle = fov / num_rays;
+	int		i = 0;
+	double	angle;
+	double	ray_x;
+	double	ray_y;
+
+	while (i < num_rays)
+	{
+		angle = start_angle + (i * step_angle);
+		ray_y = elem->player->y;
+		ray_x = elem->player->x;
+		while (1)
+		{
+			ray_x += cos(angle) * MOVE_SPEED;
+			ray_y += sin(angle) * MOVE_SPEED;
+			if (elem->map->map[(int)ray_y][(int)ray_x] == '1')
+				break ;
+			mlx_pixel_put(elem->mlx, elem->wind, ray_x * square_size, ray_y * square_size, 0x00FFFF);
+		}
+		i++;
+	}
+}
+
 void	ray_casting(t_elements **elem)
 {
 	(*elem)->player = malloc(sizeof(t_player));
@@ -171,4 +203,5 @@ void	ray_casting(t_elements **elem)
 	draw_player(*elem);
 	draw_direction_line(*elem);
 	cast_single_ray(*elem);
+	cast_multiple_rays(*elem);
 }

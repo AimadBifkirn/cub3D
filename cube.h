@@ -45,6 +45,7 @@ typedef struct s_player
 	double	y;
 	int		direction_x;
 	int		direction_y;
+    double  angle;
 }	t_player;
 
 // typedef struct s_draw
