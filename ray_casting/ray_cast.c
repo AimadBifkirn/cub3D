@@ -1,28 +1,28 @@
 #include "../cube.h"
 
-void	cast_single_ray(t_elements *elem)
-{
-	double	ray_x = elem->player->x;
-	double	ray_y = elem->player->y;
-	double	dir_x = elem->player->direction_x;
-	double	dir_y = elem->player->direction_y;
-	double	step_size = 0.05;
+// void	cast_single_ray(t_elements *elem)
+// {
+// 	double	ray_x = elem->player->x;
+// 	double	ray_y = elem->player->y;
+// 	double	dir_x = elem->player->direction_x;
+// 	double	dir_y = elem->player->direction_y;
+// 	double	step_size = 0.05;
 
-	while (1)
-	{
-		ray_x += dir_x * step_size;
-		ray_y += dir_y * step_size;
+// 	while (1)
+// 	{
+// 		ray_x += dir_x * step_size;
+// 		ray_y += dir_y * step_size;
 
-		int map_x = (int)ray_x;
-		int map_y = (int)ray_y;
+// 		int map_x = (int)ray_x;
+// 		int map_y = (int)ray_y;
 
-		if (elem->map->map[map_y][map_x] == '1')
-			break ;
-		int pixel_x = ray_x * square_size;
-		int pixel_y = ray_y * square_size;
-		mlx_pixel_put(elem->mlx, elem->wind, pixel_x, pixel_y, 0xFF00FF);
-	}
-}
+// 		if (elem->map->map[map_y][map_x] == '1')
+// 			break ;
+// 		int pixel_x = ray_x * square_size;
+// 		int pixel_y = ray_y * square_size;
+// 		mlx_pixel_put(elem->mlx, elem->wind, pixel_x, pixel_y, 0xFF00FF);
+// 	}
+// }
 
 
 void	draw_direction_line(t_elements *elem)
@@ -174,6 +174,7 @@ void	cast_multiple_rays(t_elements *elem)
 	double	start_angle = elem->player->angle - fov / 2;
 	double	step_angle = fov / num_rays;
 	int		i = 0;
+	double	step_size = 0.05;
 	double	angle;
 	double	ray_x;
 	double	ray_y;
@@ -185,8 +186,8 @@ void	cast_multiple_rays(t_elements *elem)
 		ray_x = elem->player->x;
 		while (1)
 		{
-			ray_x += cos(angle) * MOVE_SPEED;
-			ray_y += sin(angle) * MOVE_SPEED;
+			ray_x += cos(angle) * step_size;
+			ray_y += sin(angle) * step_size;
 			if (elem->map->map[(int)ray_y][(int)ray_x] == '1')
 				break ;
 			mlx_pixel_put(elem->mlx, elem->wind, ray_x * square_size, ray_y * square_size, 0x00FFFF);
@@ -195,13 +196,18 @@ void	cast_multiple_rays(t_elements *elem)
 	}
 }
 
+void	render(t_elements **elem)
+{
+	draw_map(*elem);
+	draw_player(*elem);
+	draw_direction_line(*elem);
+	// cast_single_ray(*elem);
+	cast_multiple_rays(*elem);
+}
+
 void	ray_casting(t_elements **elem)
 {
 	(*elem)->player = malloc(sizeof(t_player));
 	get_player_pos(elem);
-	draw_map(*elem);
-	draw_player(*elem);
-	draw_direction_line(*elem);
-	cast_single_ray(*elem);
-	cast_multiple_rays(*elem);
+	render(elem);
 }
