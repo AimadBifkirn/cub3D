@@ -6,7 +6,7 @@
 /*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 14:40:21 by zmounji           #+#    #+#             */
-/*   Updated: 2025/07/14 10:46:38 by abifkirn         ###   ########.fr       */
+/*   Updated: 2025/07/18 19:13:37 by abifkirn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,10 @@ int main(int ac, char ** argv)
     // deb_map();
     element->mlx = mlx_init();
     element->wind = mlx_new_window(element->mlx, 800, 600, "Cube3D");
-    ray_casting(&element);
-    mlx_hook(element->wind, 2, 1L<<0, event_handeler, &element);
+    element->img = mlx_new_image(element->mlx, 800, 600);
+    element->addr = mlx_get_data_addr(element->img, &element->bits_per_px, &element->line_len, &element->endian);
+    ray_casting(element);
+    mlx_hook(element->wind, 2, 1L<<0, event_handeler, element);
     mlx_loop(element->mlx);
     return (0);
 }

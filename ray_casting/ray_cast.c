@@ -24,6 +24,15 @@
 // 	}
 // }
 
+void	put_pixel_to_image(t_elements *elem, int x, int y, int color)
+{
+	char	*dst;
+	if (x < 0 || y < 0 || x >= 800 || y >= 600)
+		return ;
+
+	dst = elem->addr + (y * elem->line_len + x * (elem->bits_per_px / 8));
+	*(unsigned int *)dst = color;
+}
 
 void	draw_direction_line(t_elements *elem)
 {
@@ -38,7 +47,7 @@ void	draw_direction_line(t_elements *elem)
 	{
 		x = (elem->player->x * square_size - 0.5) + (elem->player->direction_x * i);
 		y = (elem->player->y * square_size - 0.5) + (elem->player->direction_y * i);
-		mlx_pixel_put(elem->mlx, elem->wind, x, y, 0xFFFF00);
+		put_pixel_to_image(elem, x, y, 0xFFFF00);
 		i++;
 	}
 }
@@ -60,7 +69,7 @@ void	draw_player(t_elements *elem)
 		x = -size;
 		while (x <= size)
 		{
-			mlx_pixel_put(elem->mlx, elem->wind, real_x + (x - 0.5), real_y + (y - 0.5), 0x0000FF);
+			put_pixel_to_image(elem, real_x + (x - 0.5), real_y + (y - 0.5), 0x0000FF);
 			x++;
 		}
 		y++;
@@ -83,7 +92,7 @@ void	put_pixels(t_elements *elem, int x, int y)
 		pixel_x = 0;
 		while (pixel_x < square_size)
 		{
-			mlx_pixel_put(elem->mlx, elem->wind, x * square_size + pixel_x,\
+			put_pixel_to_image(elem, x * square_size + pixel_x,\
 			y *square_size + pixel_y, color);
 			pixel_x++;
 		}
@@ -109,55 +118,55 @@ void	draw_map(t_elements *elem)
 	}
 }
 
-void	get_player_direction(t_elements **elem)
+void	get_player_direction(t_elements *elem)
 {
 	int	p_x;
 	int	p_y;
 
-	p_x = (int)((*elem)->player->x);
-	p_y = (int)((*elem)->player->y);
-	if ((*elem)->map->map[p_y][p_x] == 'N')
+	p_x = (int)(elem->player->x);
+	p_y = (int)(elem->player->y);
+	if (elem->map->map[p_y][p_x] == 'N')
 	{
-		(*elem)->player->direction_x = 0;
-		(*elem)->player->direction_y = -1;
-		(*elem)->player->angle = -(PI / 2);
+		elem->player->direction_x = 0;
+		elem->player->direction_y = -1;
+		elem->player->angle = -(PI / 2);
 	}
-	else if ((*elem)->map->map[p_y][p_x] == 'S')
+	else if (elem->map->map[p_y][p_x] == 'S')
 	{
-		(*elem)->player->direction_x = 0;
-		(*elem)->player->direction_y = 1;
-		(*elem)->player->angle = (PI / 2);
+		elem->player->direction_x = 0;
+		elem->player->direction_y = 1;
+		elem->player->angle = (PI / 2);
 	}
-	else if ((*elem)->map->map[p_y][p_x] == 'E')
+	else if (elem->map->map[p_y][p_x] == 'E')
 	{
-		(*elem)->player->direction_x = 1;
-		(*elem)->player->direction_y = 0;
-		(*elem)->player->angle = 0;
+		elem->player->direction_x = 1;
+		elem->player->direction_y = 0;
+		elem->player->angle = 0;
 	}
-		else if ((*elem)->map->map[p_y][p_x] == 'W')
+	else if (elem->map->map[p_y][p_x] == 'W')
 	{
-		(*elem)->player->direction_x = -1;
-		(*elem)->player->direction_y = 0;
-		(*elem)->player->angle = PI;
+		elem->player->direction_x = -1;
+		elem->player->direction_y = 0;
+		elem->player->angle = PI;
 	}
 }
 
-void	get_player_pos(t_elements **elem)
+void	get_player_pos(t_elements *elem)
 {
 	int	x;
 	int	y;
 
 	y = 0;
-	while ((*elem)->map->map[y])
+	while (elem->map->map[y])
 	{
 		x = 0;
-		while ((*elem)->map->map[y][x])
+		while (elem->map->map[y][x])
 		{
-			if ((*elem)->map->map[y][x] == 'N' || (*elem)->map->map[y][x] == 'S' 
-			|| (*elem)->map->map[y][x] == 'W' || (*elem)->map->map[y][x] == 'E')
+			if (elem->map->map[y][x] == 'N' || elem->map->map[y][x] == 'S' 
+			|| elem->map->map[y][x] == 'W' || elem->map->map[y][x] == 'E')
 			{
-				(*elem)->player->x = x + 0.5;
-				(*elem)->player->y = y + 0.5;
+				elem->player->x = x + 0.5;
+				elem->player->y = y + 0.5;
 				get_player_direction(elem);
 				return ;
 			}
@@ -170,7 +179,6 @@ void	get_player_pos(t_elements **elem)
 void	cast_multiple_rays(t_elements *elem)
 {
 	int		num_rays = 60;
-	double	fov = PI / 3; // 60° field of view
 	double	start_angle = elem->player->angle - fov / 2;
 	double	step_angle = fov / num_rays;
 	int		i = 0;
@@ -190,24 +198,27 @@ void	cast_multiple_rays(t_elements *elem)
 			ray_y += sin(angle) * step_size;
 			if (elem->map->map[(int)ray_y][(int)ray_x] == '1')
 				break ;
-			mlx_pixel_put(elem->mlx, elem->wind, ray_x * square_size, ray_y * square_size, 0x00FFFF);
+			put_pixel_to_image(elem, ray_x * square_size, ray_y * square_size, 0x00FFFF);
 		}
 		i++;
 	}
 }
 
-void	render(t_elements **elem)
+void	render(t_elements *elem)
 {
-	draw_map(*elem);
-	draw_player(*elem);
-	draw_direction_line(*elem);
-	// cast_single_ray(*elem);
-	cast_multiple_rays(*elem);
+	draw_map(elem);
+	draw_player(elem);
+	draw_direction_line(elem);
+	// cast_single_ray(elem);
+	cast_multiple_rays(elem);
+	mlx_put_image_to_window(elem->mlx, elem->wind, elem->img, 0, 0);
 }
 
-void	ray_casting(t_elements **elem)
+void	ray_casting(t_elements *elem)
 {
-	(*elem)->player = malloc(sizeof(t_player));
+	elem->player = malloc(sizeof(t_player));
 	get_player_pos(elem);
+	elem->player->plane_x = -elem->player->direction_y * fov;
+	elem->player->plane_y =  elem->player->direction_x * fov;
 	render(elem);
 }

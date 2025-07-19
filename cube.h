@@ -22,6 +22,7 @@
 #define PI 3.14285714286
 #define alpha (PI/2 - PI/8)
 #define square_size 16
+#define fov 0.66 //a FOV of about 66°
 
 
 typedef struct s_color
@@ -46,6 +47,8 @@ typedef struct s_player
 	double	y;
 	int		direction_x;
 	int		direction_y;
+    double  plane_x;
+    double  plane_y;
     double  angle;
 }	t_player;
 
@@ -71,6 +74,11 @@ typedef struct s_elements
     char    *we;
     void    *mlx;
     void    *wind;
+    void    *img;
+    char    *addr;
+    int     bits_per_px;
+    int     line_len;
+    int     endian;
     t_color *f;
     t_color *c;
     t_map   *map;
@@ -127,8 +135,9 @@ void	ft_memcpy(char *s1, char *s2, size_t i);
 char	**ft_split(char const *s, char c);
 int     ft_atoi(const char *str);
 // aimad's part
-void	ray_casting(t_elements **elem);
-void	render(t_elements **elem);
-int     event_handeler(int code, t_elements **elem);
+void	ray_casting(t_elements *elem);
+void	render(t_elements *elem);
+int     event_handeler(int code, t_elements *elem);
+void    put_pixel_to_image(t_elements *elem, int x, int y, int color);
 
 #endif
