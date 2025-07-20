@@ -81,15 +81,15 @@ int	event_handeler(int code, t_elements *elem)
 	(void) code;
 	if (code == 65361) // Left arrow
 		rotate_left(elem);
-	if (code == 65363) // Right arrow
+	else if (code == 65363) // Right arrow
 		rotate_right(elem);
-	if (code == 'w')
+	else if (code == 'w')
 		move_forward(elem);
-	if (code == 's')
+	else if (code == 's')
 		move_backward(elem);
-	if (code == 'a')
+	else if (code == 'a')
 		move_left(elem);
-	if (code == 'd')
+	else if (code == 'd')
 		move_right(elem);
 	render(elem);
 	return (0);

@@ -23,6 +23,8 @@
 #define alpha (PI/2 - PI/8)
 #define square_size 16
 #define fov 0.66 //a FOV of about 66°
+#define screen_width 800
+#define screen_height 600
 
 
 typedef struct s_color
@@ -40,15 +42,26 @@ typedef struct s_map
     char **map;
 }t_map;
 
+typedef struct s_texture
+{
+	void	*img_ptr;
+	int		*addr;
+	int		width;
+	int		height;
+	int		bpp;
+	int		line_len;
+	int		endian;
+}	t_texture;
+
 
 typedef struct s_player
 {
 	double	x;
 	double	y;
-	int		direction_x;
-	int		direction_y;
-    double  plane_x;
-    double  plane_y;
+	// int		direction_x;
+	// int		direction_y;
+    // double  plane_x;
+    // double  plane_y;
     double  angle;
 }	t_player;
 
@@ -79,6 +92,7 @@ typedef struct s_elements
     int     bits_per_px;
     int     line_len;
     int     endian;
+    t_texture   textures[4];
     t_color *f;
     t_color *c;
     t_map   *map;
@@ -139,5 +153,6 @@ void	ray_casting(t_elements *elem);
 void	render(t_elements *elem);
 int     event_handeler(int code, t_elements *elem);
 void    put_pixel_to_image(t_elements *elem, int x, int y, int color);
+int     is_free(double x, double y, char **map);
 
 #endif

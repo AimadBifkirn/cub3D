@@ -5,9 +5,9 @@ SO               ./textures/redbrick.xpm
                
 EA ./textures/colorstone.xpm
 
-F 0,255,0
+F 34,34,34
 
-C 56,255,230
+C 135,206,235
 
 
 111111111111111111111111111111111
