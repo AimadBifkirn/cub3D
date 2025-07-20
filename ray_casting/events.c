@@ -13,11 +13,9 @@ int is_free(double x, double y, char **map)
 
 void	move_forward(t_elements *elem)
 {
-	double new_x;
-	double new_y;
+	double new_x = elem->player->x + cos(elem->player->angle) * MOVE_SPEED;
+	double new_y = elem->player->y + sin(elem->player->angle) * MOVE_SPEED;
 
-	new_x = elem->player->x + (elem->player->direction_x * MOVE_SPEED);
-	new_y = elem->player->y + (elem->player->direction_y * MOVE_SPEED);
 	if (is_free(new_x, new_y, elem->map->map))
 	{
 		elem->player->x = new_x;
@@ -27,22 +25,8 @@ void	move_forward(t_elements *elem)
 
 void	move_backward(t_elements *elem)
 {
-	double new_x;
-	double new_y;
-
-	new_x = elem->player->x - (elem->player->direction_x * MOVE_SPEED);
-	new_y = elem->player->y - (elem->player->direction_y * MOVE_SPEED);
-	if (is_free(new_x, new_y, elem->map->map))
-	{
-		elem->player->x = new_x;
-		elem->player->y = new_y;
-	}
-}
-
-void move_left(t_elements *elem)
-{
-	double new_x = elem->player->x - elem->player->plane_x * MOVE_SPEED;
-	double new_y = elem->player->y - elem->player->plane_y * MOVE_SPEED;
+	double new_x = elem->player->x - cos(elem->player->angle) * MOVE_SPEED;
+	double new_y = elem->player->y - sin(elem->player->angle) * MOVE_SPEED;
 
 	if (is_free(new_x, new_y, elem->map->map))
 	{
@@ -51,11 +35,11 @@ void move_left(t_elements *elem)
 	}
 }
 
-
-void move_right(t_elements *elem)
+void	move_left(t_elements *elem)
 {
-	double new_x = elem->player->x + elem->player->plane_x * MOVE_SPEED;
-	double new_y = elem->player->y + elem->player->plane_y * MOVE_SPEED;
+	double angle = elem->player->angle - PI / 2;
+	double new_x = elem->player->x + cos(angle) * MOVE_SPEED;
+	double new_y = elem->player->y + sin(angle) * MOVE_SPEED;
 
 	if (is_free(new_x, new_y, elem->map->map))
 	{
@@ -64,35 +48,31 @@ void move_right(t_elements *elem)
 	}
 }
 
-void rotate_left(t_elements *elem)
+void	move_right(t_elements *elem)
 {
-	double old_dir_x = elem->player->direction_x;
-	double old_plane_x = elem->player->plane_x;
+	double angle = elem->player->angle + PI / 2;
+	double new_x = elem->player->x + cos(angle) * MOVE_SPEED;
+	double new_y = elem->player->y + sin(angle) * MOVE_SPEED;
 
-	elem->player->direction_x = elem->player->direction_x * cos(-ROT_SPEED) - elem->player->direction_y * sin(-ROT_SPEED);
-	elem->player->direction_y = old_dir_x * sin(-ROT_SPEED) + elem->player->direction_y * cos(-ROT_SPEED);
+	if (is_free(new_x, new_y, elem->map->map))
+	{
+		elem->player->x = new_x;
+		elem->player->y = new_y;
+	}
+}
 
-	elem->player->plane_x = elem->player->plane_x * cos(-ROT_SPEED) - elem->player->plane_y * sin(-ROT_SPEED);
-	elem->player->plane_y = old_plane_x * sin(-ROT_SPEED) + elem->player->plane_y * cos(-ROT_SPEED);
-
+void	rotate_left(t_elements *elem)
+{
 	elem->player->angle -= ROT_SPEED;
+	if (elem->player->angle < 0)
+		elem->player->angle += 2 * PI;
 }
 
-void rotate_right(t_elements *elem)
+void	rotate_right(t_elements *elem)
 {
-	double old_dir_x = elem->player->direction_x;
-	double old_plane_x = elem->player->plane_x;
-
-	// Rotate the direction vector
-	elem->player->direction_x = elem->player->direction_x * cos(ROT_SPEED) - elem->player->direction_y * sin(ROT_SPEED);
-	elem->player->direction_y = old_dir_x * sin(ROT_SPEED) + elem->player->direction_y * cos(ROT_SPEED);
-
-	// Rotate the camera plane vector
-	elem->player->plane_x = elem->player->plane_x * cos(ROT_SPEED) - elem->player->plane_y * sin(ROT_SPEED);
-	elem->player->plane_y = old_plane_x * sin(ROT_SPEED) + elem->player->plane_y * cos(ROT_SPEED);
-
-	// (optional) angle if you use it elsewhere (like for a mini-map)
 	elem->player->angle += ROT_SPEED;
+	if (elem->player->angle > 2 * PI)
+		elem->player->angle -= 2 * PI;
 }
 
 

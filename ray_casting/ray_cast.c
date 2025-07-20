@@ -34,23 +34,23 @@ void	put_pixel_to_image(t_elements *elem, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
-void	draw_direction_line(t_elements *elem)
-{
-	int		line_lenght;
-	int		i;
-	double	x;
-	double	y;
+// void	draw_direction_line(t_elements *elem)
+// {
+// 	int		line_lenght;
+// 	int		i;
+// 	double	x;
+// 	double	y;
 
-	line_lenght = 20;
-	i = 0;
-	while (i < line_lenght)
-	{
-		x = (elem->player->x * square_size - 0.5) + (elem->player->direction_x * i);
-		y = (elem->player->y * square_size - 0.5) + (elem->player->direction_y * i);
-		put_pixel_to_image(elem, x, y, 0xFFFF00);
-		i++;
-	}
-}
+// 	line_lenght = 20;
+// 	i = 0;
+// 	while (i < line_lenght)
+// 	{
+// 		x = (elem->player->x * square_size - 0.5) + (elem->player->direction_x * i);
+// 		y = (elem->player->y * square_size - 0.5) + (elem->player->direction_y * i);
+// 		put_pixel_to_image(elem, x, y, 0xFFFF00);
+// 		i++;
+// 	}
+// }
 
 void	draw_player(t_elements *elem)
 {
@@ -208,7 +208,7 @@ void	render(t_elements *elem)
 {
 	draw_map(elem);
 	draw_player(elem);
-	draw_direction_line(elem);
+	// draw_direction_line(elem);
 	// cast_single_ray(elem);
 	cast_multiple_rays(elem);
 	mlx_put_image_to_window(elem->mlx, elem->wind, elem->img, 0, 0);
