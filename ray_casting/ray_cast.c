@@ -205,97 +205,129 @@ void	get_player_pos(t_elements *elem)
 // }
 
 
+// void	cast_multiple_rays(t_elements *elem)
+// {
+// 	int		num_rays = screen_width;
+// 	double	start_angle = elem->player->angle - (fov / 2.0);
+// 	double	step_angle = fov / num_rays;
+// 	int i = 0;
+
+// 	while (i < num_rays)
+// 	{
+// 		double angle = start_angle + i * step_angle;
+// 		// Direction of ray
+// 		double ray_dir_x = cos(angle);
+// 		double ray_dir_y = sin(angle);
+// 		// Which square in the map the player is in
+// 		int map_x = (int)elem->player->x;
+// 		int map_y = (int)elem->player->y;
+// 		// Length of ray from one x or y side to next x or y side
+// 		double delta_dist_x = fabs(1 / ray_dir_x);
+// 		double delta_dist_y = fabs(1 / ray_dir_y);
+// 		// Calculate step and initial sideDist
+// 		double side_dist_x;
+// 		double side_dist_y;
+// 		int step_x;
+// 		int step_y;
+// 		if (ray_dir_x < 0)
+// 		{
+// 			step_x = -1;
+// 			side_dist_x = (elem->player->x - map_x) * delta_dist_x;
+// 		}
+// 		else
+// 		{
+// 			step_x = 1;
+// 			side_dist_x = (map_x + 1.0 - elem->player->x) * delta_dist_x;
+// 		}
+// 		if (ray_dir_y < 0)
+// 		{
+// 			step_y = -1;
+// 			side_dist_y = (elem->player->y - map_y) * delta_dist_y;
+// 		}
+// 		else
+// 		{
+// 			step_y = 1;
+// 			side_dist_y = (map_y + 1.0 - elem->player->y) * delta_dist_y;
+// 		}
+// 		// Perform DDA
+// 		int hit = 0;
+// 		int side;
+// 		while (!hit)
+// 		{
+// 			if (side_dist_x < side_dist_y)
+// 			{
+// 				side_dist_x += delta_dist_x;
+// 				map_x += step_x;
+// 				side = 0;
+// 			}
+// 			else
+// 			{
+// 				side_dist_y += delta_dist_y;
+// 				map_y += step_y;
+// 				side = 1;
+// 			}
+// 			if (elem->map->map[map_y][map_x] == '1')
+// 				hit = 1;
+// 		}
+// 		// Calculate distance to wall
+// 		double distance;
+// 		if (side == 0)
+// 			distance = (map_x - elem->player->x + (1 - step_x) / 2.0) / ray_dir_x;
+// 		else
+// 			distance = (map_y - elem->player->y + (1 - step_y) / 2.0) / ray_dir_y;
+// 		// Fix fish-eye distortion
+// 		distance *= cos(angle - elem->player->angle);
+// 		// Calculate projected wall height
+// 		int wall_height = (int)(screen_height / distance);
+// 		int wall_top = (screen_height / 2) - (wall_height / 2);
+// 		int wall_bottom = (screen_height / 2) + (wall_height / 2);
+// 		// Clamp to screen
+// 		if (wall_top < 0)
+// 			wall_top = 0;
+// 		if (wall_bottom > screen_height)
+// 			wall_bottom = screen_height;
+// 		// Shade depending on wall side
+// 		int color = (side == 0) ? 0xCCCCCC : 0x888888;
+// 		// Draw vertical line
+// 		for (int y = wall_top; y < wall_bottom; y++)
+// 			put_pixel_to_image(elem, i, y, color);
+// 		i++;
+// 	}
+// }
+
+void	initalize_draw_elems(t_draw *darw, int i)
+{
+	darw->ray_dir_x = cos(darw->start_angle + i *  darw->step_angle); // draw.start_angle + i *  draw.step_angle = ray_angle
+	darw->ray_dir_y = sin(darw->start_angle + i *  darw->step_angle);
+	darw->delta_dist_x = fabs(1 / darw->ray_dir_x);
+	darw->delta_dist_y = fabs(1 / darw->ray_dir_y);
+	if (darw->ray_dir_x < 0)
+	{
+		darw->step_x = -1;
+		side_dist_x = (player_x - map_x) * darw->delta_dist_x; // hta tkmel hadchi awdi a ana
+	}
+	else
+		darw->step_x = 1;
+	if (darw->ray_dir_y < 0)
+		darw->step_y = -1;
+	else
+		darw->step_y = 1;
+}
+
 void	cast_multiple_rays(t_elements *elem)
 {
-	int		num_rays = screen_width;
-	double	start_angle = elem->player->angle - (fov / 2.0);
-	double	step_angle = fov / num_rays;
-	int i = 0;
+	int		i;
+	t_draw	draw;
 
-	while (i < num_rays)
+	i = 0;
+	draw.start_angle = elem->player->angle - (fov / 2.0);
+	draw.step_angle = fov / screen_width;
+	while (i < screen_width)
 	{
-		double angle = start_angle + i * step_angle;
-		// Direction of ray
-		double ray_dir_x = cos(angle);
-		double ray_dir_y = sin(angle);
-		// Which square in the map the player is in
-		int map_x = (int)elem->player->x;
-		int map_y = (int)elem->player->y;
-		// Length of ray from one x or y side to next x or y side
-		double delta_dist_x = fabs(1 / ray_dir_x);
-		double delta_dist_y = fabs(1 / ray_dir_y);
-		// Calculate step and initial sideDist
-		double side_dist_x;
-		double side_dist_y;
-		int step_x;
-		int step_y;
-		if (ray_dir_x < 0)
-		{
-			step_x = -1;
-			side_dist_x = (elem->player->x - map_x) * delta_dist_x;
-		}
-		else
-		{
-			step_x = 1;
-			side_dist_x = (map_x + 1.0 - elem->player->x) * delta_dist_x;
-		}
-		if (ray_dir_y < 0)
-		{
-			step_y = -1;
-			side_dist_y = (elem->player->y - map_y) * delta_dist_y;
-		}
-		else
-		{
-			step_y = 1;
-			side_dist_y = (map_y + 1.0 - elem->player->y) * delta_dist_y;
-		}
-		// Perform DDA
-		int hit = 0;
-		int side;
-		while (!hit)
-		{
-			if (side_dist_x < side_dist_y)
-			{
-				side_dist_x += delta_dist_x;
-				map_x += step_x;
-				side = 0;
-			}
-			else
-			{
-				side_dist_y += delta_dist_y;
-				map_y += step_y;
-				side = 1;
-			}
-			if (elem->map->map[map_y][map_x] == '1')
-				hit = 1;
-		}
-		// Calculate distance to wall
-		double distance;
-		if (side == 0)
-			distance = (map_x - elem->player->x + (1 - step_x) / 2.0) / ray_dir_x;
-		else
-			distance = (map_y - elem->player->y + (1 - step_y) / 2.0) / ray_dir_y;
-		// Fix fish-eye distortion
-		distance *= cos(angle - elem->player->angle);
-		// Calculate projected wall height
-		int wall_height = (int)(screen_height / distance);
-		int wall_top = (screen_height / 2) - (wall_height / 2);
-		int wall_bottom = (screen_height / 2) + (wall_height / 2);
-		// Clamp to screen
-		if (wall_top < 0)
-			wall_top = 0;
-		if (wall_bottom > screen_height)
-			wall_bottom = screen_height;
-		// Shade depending on wall side
-		int color = (side == 0) ? 0xCCCCCC : 0x888888;
-		// Draw vertical line
-		for (int y = wall_top; y < wall_bottom; y++)
-			put_pixel_to_image(elem, i, y, color);
+		initalize_draw_elems(&draw, i);
 		i++;
 	}
 }
-
-
 
 void	render(t_elements *elem)
 {

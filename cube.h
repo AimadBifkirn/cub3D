@@ -22,7 +22,7 @@
 #define PI 3.14285714286
 #define alpha (PI/2 - PI/8)
 #define square_size 16
-#define fov 0.66 //a FOV of about 66°
+#define fov PI / 3 //a FOV of 60° in radian
 #define screen_width 800
 #define screen_height 600
 
@@ -65,18 +65,20 @@ typedef struct s_player
     double  angle;
 }	t_player;
 
-// typedef struct s_draw
-// {
-//     void    *mlx;
-//     void    *win;
-//     char    *addr;
-//     int     bits_per_pixel;
-//     int     line_length;
-//     int     endian;
-//     void    *wall_img;
-//     void    *big_image;
-//     void    *player_img;
-// }t_draw;
+typedef struct s_draw
+{
+    double  start_angle;
+    double  step_angle;
+    // double  ray_angle;
+    double  ray_dir_x;
+    double  ray_dir_y;
+    double  delta_dist_x; // bach tchof bchehal ghatzid bach tfot tail
+    double  delta_dist_y;
+    double  step_x;
+    double  step_y;
+    double  side_dist_x;
+    double  side_dist_y;
+}t_draw;
 
 typedef struct s_elements
 {
