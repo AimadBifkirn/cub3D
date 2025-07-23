@@ -21,7 +21,7 @@
 #define ROT_SPEED 0.05
 #define PI 3.14285714286
 #define alpha (PI/2 - PI/8)
-#define square_size 16
+#define square_size 10
 #define fov PI / 3 //a FOV of 60° in radian
 #define screen_width 800
 #define screen_height 600
@@ -69,15 +69,19 @@ typedef struct s_draw
 {
     double  start_angle;
     double  step_angle;
-    // double  ray_angle;
+    double  ray_angle;
     double  ray_dir_x;
     double  ray_dir_y;
     double  delta_dist_x; // bach tchof bchehal ghatzid bach tfot tail
     double  delta_dist_y;
-    double  step_x;
-    double  step_y;
+    int		step_x;
+    int		step_y;
     double  side_dist_x;
     double  side_dist_y;
+	int		map_x;
+	int		map_y;
+    int     side;
+    int		wall_height;
 }t_draw;
 
 typedef struct s_elements
@@ -156,5 +160,6 @@ void	render(t_elements *elem);
 int     event_handeler(int code, t_elements *elem);
 void    put_pixel_to_image(t_elements *elem, int x, int y, int color);
 int     is_free(double x, double y, char **map);
+void	draw_mini_map(t_elements *elem);
 
 #endif

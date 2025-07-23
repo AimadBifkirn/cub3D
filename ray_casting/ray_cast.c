@@ -52,71 +52,7 @@ void	put_pixel_to_image(t_elements *elem, int x, int y, int color)
 // 	}
 // }
 
-void	draw_player(t_elements *elem)
-{
-	int	x;
-	int	y;
-	int	size;
-	int	real_x;
-	int	real_y;
 
-	size = 4;
-	real_x = elem->player->x * square_size;
-	real_y = elem->player->y * square_size;
-	y = -size;
-	while (y <= size)
-	{
-		x = -size;
-		while (x <= size)
-		{
-			put_pixel_to_image(elem, real_x + (x - 0.5), real_y + (y - 0.5), 0x0000FF);
-			x++;
-		}
-		y++;
-	}
-}
-
-void	put_pixels(t_elements *elem, int x, int y)
-{
-	int	pixel_y;
-	int	pixel_x;
-	int	color;
-
-	pixel_y = 0;
-	if (elem->map->map[y][x] == '1')
-		color = 0xCCCCCC;
-	else
-		color = 0x333333;
-	while (pixel_y < square_size)
-	{
-		pixel_x = 0;
-		while (pixel_x < square_size)
-		{
-			put_pixel_to_image(elem, x * square_size + pixel_x,\
-			y *square_size + pixel_y, color);
-			pixel_x++;
-		}
-		pixel_y++;
-	}
-}
-
-void	draw_map(t_elements *elem)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (elem->map->map[y])
-	{
-		x = 0;
-		while (elem->map->map[y][x])
-		{
-			put_pixels(elem, x, y);
-			x++;
-		}
-		y++;
-	}
-}
 
 void	get_player_direction(t_elements *elem)
 {
@@ -175,34 +111,6 @@ void	get_player_pos(t_elements *elem)
 		y++;
 	}
 }
-
-// void	cast_multiple_rays(t_elements *elem)
-// {
-// 	int		num_rays = 60;
-// 	double	start_angle = elem->player->angle - fov / 2;
-// 	double	step_angle = fov / num_rays;
-// 	int		i = 0;
-// 	double	step_size = 0.05;
-// 	double	angle;
-// 	double	ray_x;
-// 	double	ray_y;
-
-// 	while (i < num_rays)
-// 	{
-// 		angle = start_angle + (i * step_angle);
-// 		ray_y = elem->player->y;
-// 		ray_x = elem->player->x;
-// 		while (1)
-// 		{
-// 			ray_x += cos(angle) * step_size;
-// 			ray_y += sin(angle) * step_size;
-// 			if (elem->map->map[(int)ray_y][(int)ray_x] == '1')
-// 				break ;
-// 			put_pixel_to_image(elem, ray_x * square_size, ray_y * square_size, 0x00FFFF);
-// 		}
-// 		i++;
-// 	}
-// }
 
 
 // void	cast_multiple_rays(t_elements *elem)
@@ -295,28 +203,145 @@ void	get_player_pos(t_elements *elem)
 // 	}
 // }
 
-void	initalize_draw_elems(t_draw *darw, int i)
+void	initalize_draw_elems(t_draw *darw, int i, t_elements *elem)
 {
-	darw->ray_dir_x = cos(darw->start_angle + i *  darw->step_angle); // draw.start_angle + i *  draw.step_angle = ray_angle
+	darw->ray_angle = darw->start_angle + i *  darw->step_angle;
+	darw->ray_dir_x = cos(darw->ray_angle); // draw.start_angle + i *  draw.step_angle = ray_angle
 	darw->ray_dir_y = sin(darw->start_angle + i *  darw->step_angle);
 	darw->delta_dist_x = fabs(1 / darw->ray_dir_x);
 	darw->delta_dist_y = fabs(1 / darw->ray_dir_y);
+	darw->map_x = (int)elem->player->x;
+	darw->map_y = (int)elem->player->y;
 	if (darw->ray_dir_x < 0)
 	{
 		darw->step_x = -1;
-		side_dist_x = (player_x - map_x) * darw->delta_dist_x; // hta tkmel hadchi awdi a ana
+		darw->side_dist_x = (elem->player->x - darw->map_x) * darw->delta_dist_x;
 	}
 	else
+	{
 		darw->step_x = 1;
+		darw->side_dist_x = (darw->map_x + 1.0 - elem->player->x) * darw->delta_dist_x;
+	}
 	if (darw->ray_dir_y < 0)
+	{
 		darw->step_y = -1;
+		darw->side_dist_y = (elem->player->y - darw->map_y) * darw->delta_dist_y;
+	}
 	else
+	{
 		darw->step_y = 1;
+		darw->side_dist_y = (darw->map_y + 1.0 - elem->player->y) * darw->delta_dist_y;
+	}
 }
 
-void	cast_multiple_rays(t_elements *elem)
+int	performing_dda(t_draw *draw, t_elements *elem)
+{
+	int	no_wall;
+	int	side;
+
+	no_wall  = 0;
+	while (!no_wall)
+	{
+		if (draw->side_dist_x < draw->side_dist_y)
+		{
+			draw->side_dist_x += draw->delta_dist_x;
+			draw->map_x += draw->step_x;
+			side = 0;
+		}
+		else
+		{
+			draw->side_dist_y += draw->delta_dist_y;
+			draw->map_y += draw->step_y;
+			side = 1;
+		}
+		if (elem->map->map[draw->map_y][draw->map_x] == '1')
+			no_wall = 1;
+	}
+	return (side);
+}
+
+t_texture	*get_texture(t_elements *elem, t_draw draw)
+{
+	if (draw.side == 0) // Hit a vertical wall (East or West)
+	{
+		if (draw.ray_dir_x > 0)
+			return (&elem->textures[0]);
+		else
+			return (&elem->textures[1]);
+	}
+	else // Hit a horizontal wall (North or South)
+	{
+		if (draw.ray_dir_y > 0)
+			return (&elem->textures[2]);
+		else
+			return (&elem->textures[3]);
+	}
+}
+
+long get_texture_pixel(t_texture *tex, int x, int y)
+{
+	if (x < 0 || x >= tex->width || y < 0 || y >= tex->height)
+		return (0); // prevent out-of-bounds access
+
+	int pixels_per_line = tex->line_len / 4; // since each pixel is 4 bytes
+	int color = tex->addr[y * pixels_per_line + x];
+
+	return (color & 0xFFFFFF); // remove alpha if present
+}
+
+
+
+
+long get_color(t_elements *elem, t_draw draw, double dist, int y)
+{
+	t_texture	*textu;
+	double		wallx;
+	int			tex_x;
+	int			tex_y;
+	int			h;
+
+	textu = get_texture(elem, draw);
+	if (draw.side == 0)
+		wallx = elem->player->y + dist * draw.ray_dir_y;
+	else
+		wallx = elem->player->x + dist * draw.ray_dir_x;
+	wallx -= floor(wallx); // keep only fractional part
+	tex_x = (int)(wallx * textu->width);
+	if ((draw.side == 0 && draw.ray_dir_x > 0) || (draw.side == 1 && draw.ray_dir_y < 0))
+		tex_x = textu->width - tex_x - 1;
+	h = y * 256 - screen_height * 128 + draw.wall_height * 128;
+	tex_y = ((h * textu->height) / draw.wall_height) / 256;
+
+	return (get_texture_pixel(textu, tex_x, tex_y));
+}
+
+void	drawing(t_elements *elem, double dist, int i, t_draw draw)
+{
+	int		wall_top;
+	int		wall_bottom;
+	int		y;
+	long	color;
+
+	draw.wall_height = (int)(screen_height / dist);
+	wall_top = (screen_height / 2) - (draw.wall_height / 2);
+	wall_bottom = (screen_height / 2) + (draw.wall_height / 2);
+	y = wall_top;
+	if (wall_top < 0)
+		wall_top = 0;
+	if (wall_bottom > screen_height)
+		wall_bottom = screen_height;
+	while (y < wall_bottom)
+	{
+		color = get_color(elem, draw, dist, y);
+		put_pixel_to_image(elem, i, y, color);
+		y++;
+	}
+}
+
+void	start_3d_view(t_elements *elem)
 {
 	int		i;
+	double	dist;
 	t_draw	draw;
 
 	i = 0;
@@ -324,7 +349,14 @@ void	cast_multiple_rays(t_elements *elem)
 	draw.step_angle = fov / screen_width;
 	while (i < screen_width)
 	{
-		initalize_draw_elems(&draw, i);
+		initalize_draw_elems(&draw, i, elem);
+		draw.side = performing_dda(&draw, elem);
+		if (!draw.side)
+			dist = (draw.map_x - elem->player->x + (1 - draw.step_x) / 2.0) / draw.ray_dir_x;
+		else
+			dist = (draw.map_y - elem->player->y + (1 - draw.step_y) / 2.0) / draw.ray_dir_y;
+		dist *= cos(draw.ray_angle - elem->player->angle); // fixing fish-eye effect.
+		drawing(elem, dist, i, draw);
 		i++;
 	}
 }
@@ -340,7 +372,8 @@ void	render(t_elements *elem)
 		for (int x = 0; x < 800; x++)
 			put_pixel_to_image(elem, x, y, color);
 	}
-	cast_multiple_rays(elem);
+	start_3d_view(elem);
+	draw_mini_map(elem);
 	mlx_put_image_to_window(elem->mlx, elem->wind, elem->img, 0, 0);
 }
 
