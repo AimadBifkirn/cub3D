@@ -86,6 +86,8 @@ void	cast_multiple_rays(t_elements *elem)
 		{
 			ray_x += cos(angle) * step_size;
 			ray_y += sin(angle) * step_size;
+			if (elem->map->map[(int)(ray_y - step_size)][(int)(ray_x - step_size)] == '1')
+				break ;
 			if (elem->map->map[(int)ray_y][(int)ray_x] == '1')
 				break ;
 			put_pixel_to_image(elem, ray_x * square_size, ray_y * square_size, 0x00FFFF);
