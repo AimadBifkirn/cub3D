@@ -66,13 +66,27 @@ void	draw_player(t_elements *elem)
 	}
 }
 
+int	check_bounds(t_elements *elem, double ray_x, double ray_y)
+{
+	if (elem->map->map[(int)ray_y][(int)ray_x] == '1')
+		return (1);
+	if (elem->map->map[(int)(ray_y - MOVE_SPEED)][(int)(ray_x - MOVE_SPEED)] == '1')
+		return (1);
+	if (elem->map->map[(int)(ray_y + MOVE_SPEED)][(int)(ray_x + MOVE_SPEED)] == '1')
+		return (1);
+	if (elem->map->map[(int)(ray_y + MOVE_SPEED)][(int)(ray_x - MOVE_SPEED)] == '1')
+		return (1);
+	if (elem->map->map[(int)(ray_y - MOVE_SPEED)][(int)(ray_x + MOVE_SPEED)] == '1')
+		return (1);
+	return (0);
+}
+
 void	cast_multiple_rays(t_elements *elem)
 {
 	int		num_rays = 60;
 	double	start_angle = elem->player->angle - fov / 2;
 	double	step_angle = fov / num_rays;
 	int		i = 0;
-	double	step_size = 0.05;
 	double	angle;
 	double	ray_x;
 	double	ray_y;
@@ -84,11 +98,9 @@ void	cast_multiple_rays(t_elements *elem)
 		ray_x = elem->player->x;
 		while (1)
 		{
-			ray_x += cos(angle) * step_size;
-			ray_y += sin(angle) * step_size;
-			if (elem->map->map[(int)(ray_y - step_size)][(int)(ray_x - step_size)] == '1')
-				break ;
-			if (elem->map->map[(int)ray_y][(int)ray_x] == '1')
+			ray_x += cos(angle) * MOVE_SPEED;
+			ray_y += sin(angle) * MOVE_SPEED;
+			if (check_bounds(elem, ray_x, ray_y))
 				break ;
 			put_pixel_to_image(elem, ray_x * square_size, ray_y * square_size, 0x00FFFF);
 		}
