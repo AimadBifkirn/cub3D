@@ -1,26 +1,75 @@
 #include "../cube.h"
 
+#define MINIMAP_TILE_SIZE 10
+#define MINIMAP_RADIUS 4 // Shows a 9x9 grid
+#define MINIMAP_CENTER (MINIMAP_RADIUS * MINIMAP_TILE_SIZE)
+#define MINIMAP_POS_X 40
+#define MINIMAP_POS_Y 40
+
 void	put_pixels(t_elements *elem, int x, int y)
 {
 	int	pixel_y;
 	int	pixel_x;
 	int	color;
+	int	draw_x;
+	int	draw_y;
 
+	draw_x = (x - (int)elem->player->x) * MINIMAP_TILE_SIZE + MINIMAP_POS_X;
+	draw_y = (y - (int)elem->player->y) * MINIMAP_TILE_SIZE + MINIMAP_POS_Y;
 	pixel_y = 0;
 	if (elem->map->map[y][x] == '1')
 		color = 0xCCCCCC;
 	else
 		color = 0x333333;
-	while (pixel_y < square_size)
+	while (pixel_y < MINIMAP_TILE_SIZE)
 	{
 		pixel_x = 0;
-		while (pixel_x < square_size)
+		while (pixel_x < MINIMAP_TILE_SIZE)
 		{
-			put_pixel_to_image(elem, x * square_size + pixel_x,\
-			y *square_size + pixel_y, color);
+			put_pixel_to_image(elem, draw_x + pixel_x, draw_y + pixel_y, color);
 			pixel_x++;
 		}
 		pixel_y++;
+	}
+}
+
+t_m_map	init_elements(t_elements *elem)
+{
+	t_m_map	res;
+
+	res.start_x = (int)(elem->player->x) - MINIMAP_RADIUS;
+	res.end_x = (int)(elem->player->x) + MINIMAP_RADIUS;
+	res.start_y = (int)(elem->player->y) - MINIMAP_RADIUS;
+	res.end_y = (int)(elem->player->y) + MINIMAP_RADIUS;
+	if (res.start_x < 0)
+		res.start_x = 0;
+	if (res.start_y < 0)
+		res.start_y = 0;
+	if (res.end_x >= elem->map->colomns)
+		res.end_x = elem->map->colomns;
+	if (res.end_y >= elem->map->rows)
+		res.end_y = elem->map->rows;
+	return (res);
+}
+
+void	draw_background(t_elements *elem)
+{
+	int	x;
+	int	y;
+	int max;
+
+
+	max = (2 * MINIMAP_RADIUS) * MINIMAP_TILE_SIZE;
+	y = 0;
+	while (y < max)
+	{
+		x = 0;
+		while (x < max)
+		{
+			put_pixel_to_image(elem, x, y, 0x111111);
+			x++;
+		}
+		y++;
 	}
 }
 
@@ -28,12 +77,15 @@ void	draw_map(t_elements *elem)
 {
 	int	x;
 	int	y;
+	t_m_map mini_m;
 
-	y = 0;
-	while (elem->map->map[y])
+	mini_m = init_elements(elem);	
+
+	y = mini_m.start_y;
+	while (y < mini_m.end_y && elem->map->map[y])
 	{
-		x = 0;
-		while (elem->map->map[y][x])
+		x = mini_m.start_x;
+		while (x < mini_m.end_x && elem->map->map[y][x])
 		{
 			put_pixels(elem, x, y);
 			x++;
@@ -47,19 +99,19 @@ void	draw_player(t_elements *elem)
 	int	x;
 	int	y;
 	int	size;
-	int	real_x;
-	int	real_y;
+	int	mini_p_x;
+	int	mini_p_y;
 
 	size = 3;
-	real_x = elem->player->x * square_size;
-	real_y = elem->player->y * square_size;
+	mini_p_x = MINIMAP_POS_X + MINIMAP_TILE_SIZE / 2;
+	mini_p_y = MINIMAP_POS_Y + MINIMAP_TILE_SIZE / 2;
 	y = -size;
 	while (y <= size)
 	{
 		x = -size;
 		while (x <= size)
 		{
-			put_pixel_to_image(elem, real_x + (x - 0.5), real_y + (y - 0.5), 0x0000FF);
+			put_pixel_to_image(elem, mini_p_x + (x - 0.5), mini_p_y + (y - 0.5), 0x0000FF);
 			x++;
 		}
 		y++;
@@ -102,7 +154,11 @@ void	cast_multiple_rays(t_elements *elem)
 			ray_y += sin(angle) * MOVE_SPEED;
 			if (check_bounds(elem, ray_x, ray_y))
 				break ;
-			put_pixel_to_image(elem, ray_x * square_size, ray_y * square_size, 0x00FFFF);
+			int pixel_x = MINIMAP_POS_X + (ray_x - elem->player->x + 0.5) * MINIMAP_TILE_SIZE;
+			int pixel_y = MINIMAP_POS_Y + (ray_y - elem->player->y + 0.5) * MINIMAP_TILE_SIZE;
+			if (pixel_x < 0 || pixel_y < 0 || pixel_x >= (2 * MINIMAP_RADIUS * MINIMAP_TILE_SIZE) || pixel_y >= (2 * MINIMAP_RADIUS * MINIMAP_TILE_SIZE))
+    			break;
+			put_pixel_to_image(elem, pixel_x, pixel_y, 0x00FFFF);
 		}
 		i++;
 	}
@@ -110,6 +166,7 @@ void	cast_multiple_rays(t_elements *elem)
 
 void	draw_mini_map(t_elements *elem)
 {
+	draw_background(elem);
 	draw_map(elem);
 	draw_player(elem);
 	cast_multiple_rays(elem);

@@ -11,7 +11,7 @@ int is_free(double x, double y, char **map)
 	return (1);
 }
 
-void	move_forward(t_elements *elem)
+void	move_forward(t_elements *elem, int *check)
 {
 	double new_x = elem->player->x + cos(elem->player->angle) * MOVE_SPEED;
 	double new_y = elem->player->y + sin(elem->player->angle) * MOVE_SPEED;
@@ -21,9 +21,11 @@ void	move_forward(t_elements *elem)
 		elem->player->x = new_x;
 		elem->player->y = new_y;
 	}
+	else
+		*check = 1;
 }
 
-void	move_backward(t_elements *elem)
+void	move_backward(t_elements *elem, int *check)
 {
 	double new_x = elem->player->x - cos(elem->player->angle) * MOVE_SPEED;
 	double new_y = elem->player->y - sin(elem->player->angle) * MOVE_SPEED;
@@ -33,9 +35,11 @@ void	move_backward(t_elements *elem)
 		elem->player->x = new_x;
 		elem->player->y = new_y;
 	}
+	else
+		*check = 1;
 }
 
-void	move_left(t_elements *elem)
+void	move_left(t_elements *elem, int *check)
 {
 	double angle = elem->player->angle - PI / 2;
 	double new_x = elem->player->x + cos(angle) * MOVE_SPEED;
@@ -46,9 +50,11 @@ void	move_left(t_elements *elem)
 		elem->player->x = new_x;
 		elem->player->y = new_y;
 	}
+	else
+		*check = 1;
 }
 
-void	move_right(t_elements *elem)
+void	move_right(t_elements *elem, int *check)
 {
 	double angle = elem->player->angle + PI / 2;
 	double new_x = elem->player->x + cos(angle) * MOVE_SPEED;
@@ -59,6 +65,8 @@ void	move_right(t_elements *elem)
 		elem->player->x = new_x;
 		elem->player->y = new_y;
 	}
+	else
+		*check = 1;
 }
 
 void	rotate_left(t_elements *elem)
@@ -78,19 +86,22 @@ void	rotate_right(t_elements *elem)
 
 int	event_handeler(int code, t_elements *elem)
 {
-	(void) code;
+	int	check;
+
+	check = 0;
 	if (code == 65361) // Left arrow
 		rotate_left(elem);
 	else if (code == 65363) // Right arrow
 		rotate_right(elem);
 	else if (code == 'w')
-		move_forward(elem);
+		move_forward(elem, &check);
 	else if (code == 's')
-		move_backward(elem);
+		move_backward(elem, &check);
 	else if (code == 'a')
-		move_left(elem);
+		move_left(elem, &check);
 	else if (code == 'd')
-		move_right(elem);
-	render(elem);
+		move_right(elem, &check);
+	if (check == 0)
+		render(elem);
 	return (0);
 }

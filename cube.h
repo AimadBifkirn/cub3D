@@ -27,6 +27,17 @@
 #define screen_height 600
 
 
+// aimad : it is for drawing mini_map, need it cause of norminette :|
+typedef struct s_mini_map
+{
+    int	start_y;
+	int	start_x;
+	int	end_y;
+	int	end_x;
+}   t_m_map;
+
+
+
 typedef struct s_color
 {
     int a;
@@ -83,6 +94,7 @@ typedef struct s_draw
     int     side;
     int		wall_height;
 }t_draw;
+
 
 typedef struct s_elements
 {
@@ -161,5 +173,6 @@ int     event_handeler(int code, t_elements *elem);
 void    put_pixel_to_image(t_elements *elem, int x, int y, int color);
 int     is_free(double x, double y, char **map);
 void	draw_mini_map(t_elements *elem);
+void	initalize_draw_elems(t_draw *darw, int i, t_elements *elem);
 
 #endif

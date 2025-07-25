@@ -205,7 +205,7 @@ void	get_player_pos(t_elements *elem)
 
 void	initalize_draw_elems(t_draw *darw, int i, t_elements *elem)
 {
-	darw->ray_angle = darw->start_angle + i *  darw->step_angle;
+	darw->ray_angle = darw->start_angle + (i *  darw->step_angle);
 	darw->ray_dir_x = cos(darw->ray_angle); // draw.start_angle + i *  draw.step_angle = ray_angle
 	darw->ray_dir_y = sin(darw->start_angle + i *  darw->step_angle);
 	darw->delta_dist_x = fabs(1 / darw->ray_dir_x);
