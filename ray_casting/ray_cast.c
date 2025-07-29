@@ -63,26 +63,18 @@ void	get_player_direction(t_elements *elem)
 	p_y = (int)(elem->player->y);
 	if (elem->map->map[p_y][p_x] == 'N')
 	{
-		// elem->player->direction_x = 0;
-		// elem->player->direction_y = -1;
 		elem->player->angle = -(PI / 2);
 	}
 	else if (elem->map->map[p_y][p_x] == 'S')
 	{
-		// elem->player->direction_x = 0;
-		// elem->player->direction_y = 1;
 		elem->player->angle = (PI / 2);
 	}
 	else if (elem->map->map[p_y][p_x] == 'E')
 	{
-		// elem->player->direction_x = 1;
-		// elem->player->direction_y = 0;
 		elem->player->angle = 0;
 	}
 	else if (elem->map->map[p_y][p_x] == 'W')
 	{
-		// elem->player->direction_x = -1;
-		// elem->player->direction_y = 0;
 		elem->player->angle = PI;
 	}
 }
