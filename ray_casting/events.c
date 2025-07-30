@@ -11,62 +11,50 @@ int is_free(double x, double y, char **map)
 	return (1);
 }
 
-void	move_forward(t_elements *elem, int *check)
+void	move_forward(t_elements *elem)
 {
 	double new_x = elem->player->x + cos(elem->player->angle) * MOVE_SPEED;
 	double new_y = elem->player->y + sin(elem->player->angle) * MOVE_SPEED;
 
-	if (is_free(new_x, new_y, elem->map->map))
-	{
+	if (is_free(new_x, elem->player->y, elem->map->map))
 		elem->player->x = new_x;
+	if (is_free(elem->player->x, new_y, elem->map->map))
 		elem->player->y = new_y;
-	}
-	else
-		*check = 1;
 }
 
-void	move_backward(t_elements *elem, int *check)
+void	move_backward(t_elements *elem)
 {
 	double new_x = elem->player->x - cos(elem->player->angle) * MOVE_SPEED;
 	double new_y = elem->player->y - sin(elem->player->angle) * MOVE_SPEED;
 
-	if (is_free(new_x, new_y, elem->map->map))
-	{
+	if (is_free(new_x, elem->player->y, elem->map->map))
 		elem->player->x = new_x;
+	if (is_free(elem->player->x, new_y, elem->map->map))
 		elem->player->y = new_y;
-	}
-	else
-		*check = 1;
 }
 
-void	move_left(t_elements *elem, int *check)
+void	move_left(t_elements *elem)
 {
 	double angle = elem->player->angle - PI / 2;
 	double new_x = elem->player->x + cos(angle) * MOVE_SPEED;
 	double new_y = elem->player->y + sin(angle) * MOVE_SPEED;
 
-	if (is_free(new_x, new_y, elem->map->map))
-	{
+	if (is_free(new_x, elem->player->y, elem->map->map))
 		elem->player->x = new_x;
+	if (is_free(elem->player->x, new_y, elem->map->map))
 		elem->player->y = new_y;
-	}
-	else
-		*check = 1;
 }
 
-void	move_right(t_elements *elem, int *check)
+void	move_right(t_elements *elem)
 {
 	double angle = elem->player->angle + PI / 2;
 	double new_x = elem->player->x + cos(angle) * MOVE_SPEED;
 	double new_y = elem->player->y + sin(angle) * MOVE_SPEED;
 
-	if (is_free(new_x, new_y, elem->map->map))
-	{
+	if (is_free(new_x, elem->player->y, elem->map->map))
 		elem->player->x = new_x;
+	if (is_free(elem->player->x, new_y, elem->map->map))
 		elem->player->y = new_y;
-	}
-	else
-		*check = 1;
 }
 
 void	rotate_left(t_elements *elem)
@@ -86,22 +74,18 @@ void	rotate_right(t_elements *elem)
 
 int	event_handeler(int code, t_elements *elem)
 {
-	int	check;
-
-	check = 0;
 	if (code == 65361) // Left arrow
 		rotate_left(elem);
 	else if (code == 65363) // Right arrow
 		rotate_right(elem);
 	else if (code == 'w')
-		move_forward(elem, &check);
+		move_forward(elem);
 	else if (code == 's')
-		move_backward(elem, &check);
+		move_backward(elem);
 	else if (code == 'a')
-		move_left(elem, &check);
+		move_left(elem);
 	else if (code == 'd')
-		move_right(elem, &check);
-	if (check == 0)
-		render(elem);
+		move_right(elem);
+	render(elem);
 	return (0);
 }

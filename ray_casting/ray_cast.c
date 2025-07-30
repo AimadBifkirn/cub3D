@@ -27,7 +27,7 @@
 void	put_pixel_to_image(t_elements *elem, int x, int y, int color)
 {
 	char	*dst;
-	if (x < 0 || y < 0 || x >= 800 || y >= 600)
+	if (x < 0 || y < 0 || x >= screen_width || y >= screen_height)
 		return ;
 
 	dst = elem->addr + (y * elem->line_len + x * (elem->bits_per_px / 8));
@@ -358,10 +358,10 @@ void	render(t_elements *elem)
 	int ceiling_color = (elem->c->a << 16) | (elem->c->b << 8) | elem->c->c;
 	int floor_color = (elem->f->a << 16) | (elem->f->b << 8) | elem->f->c;
 
-	for (int y = 0; y < 600; y++)
+	for (int y = 0; y < screen_height; y++)
 	{
-		int color = (y < 600 / 2) ? ceiling_color : floor_color;
-		for (int x = 0; x < 800; x++)
+		int color = (y < screen_height / 2) ? ceiling_color : floor_color;
+		for (int x = 0; x < screen_width; x++)
 			put_pixel_to_image(elem, x, y, color);
 	}
 	start_3d_view(elem);

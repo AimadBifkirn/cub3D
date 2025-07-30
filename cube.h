@@ -23,17 +23,17 @@
 #define alpha (PI/2 - PI/8)
 #define square_size 10
 #define fov PI / 3 //a FOV of 60° in radian
-#define screen_width 800
-#define screen_height 600
+#define screen_width 1200
+#define screen_height 1000
 
 
 // aimad : it is for drawing mini_map, need it cause of norminette :|
 typedef struct s_mini_map
 {
-    int	start_y;
-	int	start_x;
-	int	end_y;
-	int	end_x;
+    double	start_y;
+	double	start_x;
+	double	end_y;
+	double	end_x;
 }   t_m_map;
 
 
