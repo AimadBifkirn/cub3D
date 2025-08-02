@@ -86,6 +86,26 @@ int	event_handeler(int code, t_elements *elem)
 		move_left(elem);
 	else if (code == 'd')
 		move_right(elem);
-	render(elem);
+	return (0);
+}
+
+int	mouse_move_handler(int x, int y, t_elements *elem)
+{
+	static int last_x = -1;
+	int delta_x;
+
+	(void)y;
+	if (last_x == -1)
+		last_x = x;
+	delta_x = x - last_x;
+	last_x = x;
+	double sensitivity = 0.001;
+	elem->player->angle += delta_x * sensitivity;
+
+	// Keep angle in [0, 2π]
+	if (elem->player->angle < 0)
+		elem->player->angle += 2 * PI;
+	else if (elem->player->angle > 2 * PI)
+		elem->player->angle -= 2 * PI;
 	return (0);
 }

@@ -119,7 +119,7 @@ int	check_bounds(t_elements *elem, double ray_x, double ray_y)
 
 void cast_multiple_rays(t_elements *elem)
 {
-	int num_rays = 60;
+	int num_rays = 10;
 	double start_angle = elem->player->angle - fov / 2;
 	double step_angle = fov / num_rays;
 	int i = 0;

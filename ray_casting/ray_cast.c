@@ -358,16 +358,23 @@ void	render(t_elements *elem)
 	int ceiling_color = (elem->c->a << 16) | (elem->c->b << 8) | elem->c->c;
 	int floor_color = (elem->f->a << 16) | (elem->f->b << 8) | elem->f->c;
 
-	for (int y = 0; y < screen_height; y++)
+	int y = 0;
+	while (y < screen_height)
 	{
 		int color = (y < screen_height / 2) ? ceiling_color : floor_color;
-		for (int x = 0; x < screen_width; x++)
+		int x = 0;
+		while (x < screen_width)
+		{
 			put_pixel_to_image(elem, x, y, color);
+			x++;
+		}
+		y++;
 	}
 	start_3d_view(elem);
 	draw_mini_map(elem);
 	mlx_put_image_to_window(elem->mlx, elem->wind, elem->img, 0, 0);
 }
+
 
 
 void	load_textures(t_elements *elem)

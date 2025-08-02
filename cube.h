@@ -174,5 +174,6 @@ void    put_pixel_to_image(t_elements *elem, int x, int y, int color);
 int     is_free(double x, double y, char **map);
 void	draw_mini_map(t_elements *elem);
 void	initalize_draw_elems(t_draw *darw, int i, t_elements *elem);
+int     mouse_move_handler(int x, int y, t_elements *elem);
 
 #endif
