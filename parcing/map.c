@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmounji <zmounji@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:13:34 by zmounji           #+#    #+#             */
-/*   Updated: 2025/06/30 14:44:02 by zmounji          ###   ########.fr       */
+/*   Updated: 2025/08/04 13:52:07 by abifkirn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ char	*ft_strnext( char *haystack, const char *needle)
             j++;
         if (needle[j] == '\0')
         {
-            while (haystack && (haystack [j] == '\t' || haystack[j] == ' '))
+            while (haystack && (haystack [i + j] == '\t' || haystack[i + j] == ' '))
                 j++;
-            return (haystack + j);
+            return (haystack + i +j );
         }
         i++;
     }
@@ -56,25 +56,36 @@ int extruct_elements(char *line)
     str = NULL;
     element = getter();
     str = ft_strnext(line, "NO");
+    printf("orsnh ---> %s\n", str);
     if (str && element->no)
         ft_error_el ("elements was duplicated");
+    if (str)
+    {
+        element->no = extruct_link(str);
+    }
     if (!str)
     {
         str = ft_strnext(line, "SO");
         if (str && element->so)
             ft_error_el ("elements was duplicated");
+        if (str)
+            element->so = extruct_link(str);
     }
     if (!str)
     {
         str = ft_strnext(line, "WE");
         if (str && element->we)
             ft_error_el ("elements was duplicated");
+        if (str)
+            element->we = extruct_link(str);
     }
     if (!str)
     {
         str = ft_strnext(line, "EA");
         if (str && element->ea)
             ft_error_el ("elements was duplicated");
+        if (str)
+            element->ea = extruct_link(str);
     }
     if (!str)
     {
@@ -134,18 +145,44 @@ int extruct_elements(char *line)
     return (str != NULL);
 }
 
+char    *extruct_link(char *str)
+{
+    int i;
+    int l;
+    int j;
+    char *link;
 
+    i = 0;
+    l = 0;
+    if (!str || !*str)
+        return (NULL);
+    while (str[i] == ' ' || str[i] == '\t')
+        i++;
+    j = i;
+    while (str[i] && str[i] != ' ' && str[i] != '\t')
+        i++;
+    link = malloc (i - j + 1);
+    if (!link)
+        return (NULL);
+    link[i - j] = '\0';
+    while((l+j) < i)
+    {
+        link[l] = str[l+j];
+        l++;
+    }
+    return (link);
+}
 
 int extruct_them(char *line)
 {
     int             i;
     char            *str;
-    t_elements      *element;
+    // t_elements      *element;
     
     // printf("start \n");
     i = 0;
     str = NULL;
-    element = getter();
+    // element = getter();
     str = ft_strnext(line, "NO");
     if (!str)
     {
@@ -154,6 +191,7 @@ int extruct_them(char *line)
     if (!str)
     {
         str = ft_strnext(line, "WE");
+
     }
     if (!str)
     {
@@ -185,9 +223,9 @@ void    map(char **argv)
     int     fd;
     int     number;
     char    *line;
-    t_elements  *element;
+    // t_elements  *element;
 
-    element = getter();
+    // element = getter();
 
     fd = open (argv[1], O_RDONLY,0644);
     line = NULL;
@@ -207,5 +245,4 @@ void    map(char **argv)
     upload_map(argv);
     cheack_map();
     // deb_map();
-    
 }

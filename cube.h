@@ -8,6 +8,7 @@
 #include <stdio.h>
 # include <X11/X.h>
 # include <X11/keysym.h>
+// # include "minilibx-linux/mlx.h"
 # include <mlx.h>
 #include <sys/wait.h>
 #include <math.h>
@@ -25,18 +26,14 @@
 #define fov PI / 3 //a FOV of 60° in radian
 #define screen_width 1200
 #define screen_height 1000
-
-
 // aimad : it is for drawing mini_map, need it cause of norminette :|
 typedef struct s_mini_map
 {
-    double	start_y;
-	double	start_x;
-	double	end_y;
-	double	end_x;
+    int	start_y;
+	int	start_x;
+	int	end_y;
+	int	end_x;
 }   t_m_map;
-
-
 
 typedef struct s_color
 {
@@ -78,6 +75,7 @@ typedef struct s_player
 
 typedef struct s_draw
 {
+    int     door;
     double  start_angle;
     double  step_angle;
     double  ray_angle;
@@ -93,8 +91,8 @@ typedef struct s_draw
 	int		map_y;
     int     side;
     int		wall_height;
-}t_draw;
-
+    double  dist_to_wall;
+}	t_draw;
 
 typedef struct s_elements
 {
@@ -110,7 +108,7 @@ typedef struct s_elements
     int     bits_per_px;
     int     line_len;
     int     endian;
-    t_texture   textures[4];
+    t_texture   textures[5];
     t_color *f;
     t_color *c;
     t_map   *map;
@@ -155,6 +153,7 @@ void        print_map(t_elements *element);
 
 
 char	*get_next_line(int fd);
+t_draw	*getter_draw(void);
 size_t	ft_strlen(char *s);
 char	*ft_strchr(char *s, int c);
 char	*ft_strjoin(char *s1, char *s2);
@@ -173,6 +172,7 @@ int     event_handeler(int code, t_elements *elem);
 void    put_pixel_to_image(t_elements *elem, int x, int y, int color);
 int     is_free(double x, double y, char **map);
 void	draw_mini_map(t_elements *elem);
+char    *extruct_link(char *str);
 void	initalize_draw_elems(t_draw *darw, int i, t_elements *elem);
 int     mouse_move_handler(int x, int y, t_elements *elem);
 
