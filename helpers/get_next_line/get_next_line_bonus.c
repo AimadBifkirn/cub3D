@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmounji <zmounji@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/30 06:44:09 by zmounji           #+#    #+#             */
-/*   Updated: 2025/06/30 14:54:01 by zmounji          ###   ########.fr       */
+/*   Created: 2024/12/01 20:18:30 by zmounji           #+#    #+#             */
+/*   Updated: 2025/08/21 10:56:25 by abifkirn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "../../cube_bonus.h"
 
 char	*reset_res(char *reserve)
 {
@@ -24,7 +24,7 @@ char	*reset_res(char *reserve)
 		i++;
 	if (reserve[i] == '\n')
 		i++;
-	newres = malloc((ft_strlen(reserve) - i) + 1);
+	newres = ft_malloc((ft_strlen(reserve) - i) + 1);
 	if (!newres)
 		return (NULL);
 	while (reserve[i])
@@ -34,7 +34,8 @@ char	*reset_res(char *reserve)
 		i++;
 	}
 	newres[j] = '\0';
-	free (reserve);
+	ft_free (reserve);
+	reserve = NULL;
 	return (newres);
 }
 
@@ -44,13 +45,14 @@ char	*read_mine(int fd)
 	ssize_t	i;
 
 	i = 0;
-	r = malloc((size_t)(BUFFER_SIZE + 1));
+	r = ft_malloc((size_t)(BUFFER_SIZE + 1));
 	if (!r)
 		return (NULL);
 	i = read(fd, r, BUFFER_SIZE);
 	if (i <= 0)
 	{
-		free (r);
+		ft_free (r);
+		r = NULL;
 		return (NULL);
 	}
 	r[i] = '\0';
@@ -65,19 +67,11 @@ char	*get_line(char *reserve)
 	i = 0;
 	while (reserve[i] && reserve[i] != '\n')
 		i++;
-	if (reserve[i] == '\n')
-		line = malloc(i + 2);
-	else
-		line = malloc(i + 1);
+	line = ft_malloc(i + 1);
 	if (!line)
 		return (NULL);
 	i = 0;
 	while (reserve[i] && reserve[i] != '\n')
-	{
-		line[i] = reserve[i];
-		i++;
-	}
-	if (reserve[i] == '\n')
 	{
 		line[i] = reserve[i];
 		i++;
@@ -88,27 +82,27 @@ char	*get_line(char *reserve)
 
 char	*get_next_line(int fd)
 {
-	static char	*stash[1048576];
-	char		*readed;
 	char		*line;
+	char		*readed;
+	static char	*reserve;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 1048576)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while (!ft_strchr(stash[fd], '\n'))
+	while (!ft_strchr(reserve, '\n'))
 	{
 		readed = read_mine(fd);
 		if (!readed)
 			break ;
-		stash[fd] = ft_strjoin(stash[fd], readed);
+		reserve = ft_strjoin(reserve, readed);
 	}
-	if (!stash[fd])
+	if (!reserve)
 		return (NULL);
-	line = get_line (stash[fd]);
-	stash[fd] = reset_res(stash[fd]);
-	if (!*stash[fd])
+	line = get_line (reserve);
+	reserve = reset_res(reserve);
+	if (!*reserve)
 	{
-		free (stash[fd]);
-		stash[fd] = NULL;
+		ft_free (reserve);
+		reserve = NULL;
 	}
 	return (line);
 }

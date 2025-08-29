@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   ft_split_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmounji <zmounji@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:23:31 by zmounji           #+#    #+#             */
-/*   Updated: 2025/06/29 12:02:59 by zmounji          ###   ########.fr       */
+/*   Updated: 2025/08/21 15:33:16 by abifkirn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../cube.h"
+#include "../../cube_bonus.h"
 
 static char	**free_array(char **ptr, int i)
 {
 	while (i > 0)
 	{
 		i--;
-		free(ptr[i]);
+		ft_free(ptr[i]);
 		ptr[i] = NULL;
 	}
-	free(ptr);
+	ft_free(ptr);
 	ptr = NULL;
 	return (NULL);
 }
@@ -54,7 +54,7 @@ static char	*ft_putword(char const *s, int start, int word_len)
 	int		j;
 
 	j = 0;
-	word = (char *)malloc(sizeof(char) * (word_len + 1));
+	word = (char *)ft_malloc(sizeof(char) * (word_len + 1));
 	if (!word)
 		return (NULL);
 	while (j < word_len)
@@ -104,7 +104,7 @@ char	**ft_split(char const *s, char c)
 	if (!s)
 		return (NULL);
 	num_words = ft_count_words(s, c);
-	s2 = (char **)malloc(sizeof(char *) * (num_words + 1));
+	s2 = (char **)ft_malloc(sizeof(char *) * (num_words + 1));
 	if (!s2)
 		return (NULL);
 	s2 = ft_split_words(s, c, s2, num_words);
