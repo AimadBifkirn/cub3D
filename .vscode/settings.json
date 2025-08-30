@@ -1,4 +1,18 @@
 {
+<<<<<<< HEAD
+<<<<<<< HEAD
+    "files.associations": {
+        "bit": "c",
+        "map": "c",
+        "format": "c",
+        "mlx.h": "c"
+    }
+=======
 	"C_Cpp.errorSquiggles": "enabled"
 	
+>>>>>>> abifkirn
+=======
+	"C_Cpp.errorSquiggles": "enabled"
+	
+>>>>>>> abifkirn
 }

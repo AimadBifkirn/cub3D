@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ray_cast_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: zmounji <zmounji@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 09:53:01 by abifkirn          #+#    #+#             */
-/*   Updated: 2025/08/21 10:56:25 by abifkirn         ###   ########.fr       */
+/*   Updated: 2025/08/23 10:35:57 by zmounji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	start_3d_view(t_elements *elem)
 	int		i;
 	t_draw	draw;
 	double	dist_for_height;
-	double	dist_for_tex;
+	double	ray_long;
 
 	i = 0;
 	draw.start_angle = elem->player->angle - (FOV / 2.0);
@@ -81,14 +81,14 @@ void	start_3d_view(t_elements *elem)
 		initalize_draw_elems(&draw, i, elem);
 		draw.side = performing_dda(&draw, elem);
 		if (!draw.side)
-			dist_for_tex = (draw.map_x - elem->player->x \
+			ray_long = (draw.map_x - elem->player->x \
 			+ (1 - draw.step_x) / 2.0) / draw.ray_dir_x;
 		else
-			dist_for_tex = (draw.map_y - elem->player->y \
+			ray_long = (draw.map_y - elem->player->y \
 			+ (1 - draw.step_y) / 2.0) / draw.ray_dir_y;
-		dist_for_height = dist_for_tex \
+		dist_for_height = ray_long \
 		* cos(draw.ray_angle - elem->player->angle);
-		draw.dist_to_wall = dist_for_tex;
+		draw.dist_to_wall = ray_long;
 		drawing(elem, dist_for_height, i, draw);
 		i++;
 	}

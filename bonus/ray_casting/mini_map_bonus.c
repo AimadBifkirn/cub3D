@@ -6,7 +6,7 @@
 /*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 12:29:02 by abifkirn          #+#    #+#             */
-/*   Updated: 2025/08/26 16:24:32 by abifkirn         ###   ########.fr       */
+/*   Updated: 2025/08/21 10:56:25 by abifkirn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ void	draw_player(t_elements *elem)
 	int	x;
 
 	size = 3;
-	mini_p_x = MINIMAP_SIZE / 2 - 1;
-	mini_p_y = MINIMAP_SIZE / 2 - 1;
+	mini_p_x = MINIMAP_SIZE / 2;
+	mini_p_y = MINIMAP_SIZE / 2;
 	y = -size;
 	while (y <= size)
 	{
@@ -30,7 +30,7 @@ void	draw_player(t_elements *elem)
 		while (x <= size)
 		{
 			put_pixel_to_image(elem, mini_p_x \
-			+ x, mini_p_y + y, 0x0000FF);
+			+ (x - 0.5), mini_p_y + (y - 0.5), 0x0000FF);
 			x++;
 		}
 		y++;

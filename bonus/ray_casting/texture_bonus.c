@@ -6,7 +6,7 @@
 /*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:40:30 by abifkirn          #+#    #+#             */
-/*   Updated: 2025/08/24 21:50:11 by abifkirn         ###   ########.fr       */
+/*   Updated: 2025/08/21 10:56:25 by abifkirn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,13 +83,13 @@ void	check_loading(t_elements *elem)
 void	load_textures(t_elements *elem)
 {
 	elem->textures[0].img_ptr = mlx_xpm_file_to_image(elem->mlx, \
-	elem->no, &elem->textures[0].width, &elem->textures[0].height);
+	"textures/wall_1.xpm", &elem->textures[0].width, &elem->textures[0].height);
 	elem->textures[1].img_ptr = mlx_xpm_file_to_image(elem->mlx, \
-	elem->so, &elem->textures[1].width, &elem->textures[1].height);
+	"textures/wall_2.xpm", &elem->textures[1].width, &elem->textures[1].height);
 	elem->textures[2].img_ptr = mlx_xpm_file_to_image(elem->mlx, \
-	elem->ea, &elem->textures[2].width, &elem->textures[2].height);
+	"textures/wall_3.xpm", &elem->textures[2].width, &elem->textures[2].height);
 	elem->textures[3].img_ptr = mlx_xpm_file_to_image(elem->mlx, \
-	elem->we, &elem->textures[3].width, &elem->textures[3].height);
+	"textures/wall_4.xpm", &elem->textures[3].width, &elem->textures[3].height);
 	elem->textures[4].img_ptr = mlx_xpm_file_to_image(elem->mlx, \
 	"textures/door.xpm", &elem->textures[4].width, &elem->textures[4].height);
 	load_gun_textu(elem);

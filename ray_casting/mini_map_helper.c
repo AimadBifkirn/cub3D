@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_map_helper_bonus.c                            :+:      :+:    :+:   */
+/*   mini_map_helper.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abifkirn <abifkirn@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 15:18:51 by abifkirn          #+#    #+#             */
-/*   Updated: 2025/08/24 21:53:40 by abifkirn         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:20:32 by abifkirn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cube_bonus.h"
+#include "../cube.h"
 
 void	put_pixels(t_elements *elem, int x, int y)
 {
@@ -86,10 +86,10 @@ void	draw_map(t_elements *elem)
 
 	mini_m = init_elements(elem);
 	y = mini_m.start_y;
-	while (y < mini_m.end_y)
+	while (y < mini_m.end_y && y < 80)
 	{
 		x = mini_m.start_x;
-		while (x < mini_m.end_x)
+		while (x < mini_m.end_x && x < 80)
 		{
 			put_pixels(elem, x, y);
 			x++;
